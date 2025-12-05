@@ -1,0 +1,1049 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>House Price Estimator</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    /* Additional styles */
+    .app-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 16px;
+      color: white;
+    }
+    
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .logo-circle {
+      width: 60px;
+      height: 60px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 800;
+      color: #667eea;
+    }
+    
+    .title-section h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 800;
+    }
+    
+    .title-section p {
+      margin: 5px 0 0;
+      opacity: 0.9;
+      font-weight: 300;
+    }
+    
+    .header-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-outline {
+      background: transparent;
+      border: 2px solid white;
+      color: white;
+    }
+    
+    .btn-outline:hover {
+      background: white;
+      color: #667eea;
+    }
+    
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+    
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      border: 1px solid #e5e7eb;
+    }
+    
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0 0 25px 0;
+      color: #1f2937;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .section-title::before {
+      content: "";
+      width: 4px;
+      height: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    
+    @media (max-width: 480px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #4b5563;
+      font-size: 14px;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      background: #f9fafb;
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    select.form-input {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 15px center;
+      padding-right: 40px;
+    }
+    
+    .form-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+      padding-top: 25px;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 14px 30px;
+      flex: 1;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.2);
+    }
+    
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #4b5563;
+      border: 2px solid #e5e7eb;
+      padding: 14px 30px;
+      flex: 1;
+    }
+    
+    .btn-secondary:hover {
+      background: #e5e7eb;
+    }
+    
+    /* Loading indicator */
+    .loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 16px;
+      z-index: 10;
+      display: none;
+    }
+    
+    .loading-overlay.show {
+      display: flex;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #f3f4f6;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+    
+    .loading-text {
+      font-size: 16px;
+      color: #4b5563;
+      font-weight: 600;
+    }
+    
+    /* Result card */
+    .result-card {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border-left: 6px solid #059669;
+      padding: 30px;
+      border-radius: 16px;
+      margin-top: 30px;
+      position: relative;
+      display: none;
+      animation: slideIn 0.5s ease;
+    }
+    
+    .result-card.show {
+      display: block;
+    }
+    
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+    
+    .result-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1f2937;
+      margin: 0;
+    }
+    
+    .btn-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #6b7280;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 6px;
+    }
+    
+    .btn-close:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    
+    .price-display {
+      text-align: center;
+      margin: 30px 0;
+    }
+    
+    .price-amount {
+      font-size: 48px;
+      font-weight: 800;
+      color: #059669;
+      margin: 0;
+      line-height: 1.2;
+    }
+    
+    .price-words {
+      font-size: 18px;
+      color: #6b7280;
+      margin: 10px 0 0;
+      font-style: italic;
+    }
+    
+    .result-details {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      margin: 25px 0;
+    }
+    
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+    
+    .detail-label {
+      color: #6b7280;
+      font-weight: 500;
+    }
+    
+    .detail-value {
+      color: #1f2937;
+      font-weight: 600;
+    }
+    
+    .result-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+    }
+    
+    .btn-copy {
+      flex: 1;
+      background: #3b82f6;
+      color: white;
+    }
+    
+    .btn-copy:hover {
+      background: #2563eb;
+    }
+    
+    .btn-new {
+      flex: 1;
+      background: #f3f4f6;
+      color: #4b5563;
+    }
+    
+    .btn-new:hover {
+      background: #e5e7eb;
+    }
+    
+    /* Input summary card */
+    .summary-card {
+      position: sticky;
+      top: 20px;
+      height: fit-content;
+    }
+    
+    .input-summary {
+      background: #f8fafc;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .summary-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #4b5563;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .summary-list {
+      display: grid;
+      gap: 10px;
+    }
+    
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .summary-item:last-child {
+      border-bottom: none;
+    }
+    
+    .summary-label {
+      color: #6b7280;
+      font-size: 14px;
+    }
+    
+    .summary-value {
+      font-weight: 600;
+      color: #1f2937;
+      font-size: 14px;
+    }
+    
+    .prediction-preview {
+      text-align: center;
+      padding: 30px 20px;
+    }
+    
+    .preview-price {
+      font-size: 36px;
+      font-weight: 800;
+      color: #1f2937;
+      margin: 0;
+      min-height: 44px;
+    }
+    
+    .preview-text {
+      color: #6b7280;
+      margin: 10px 0 0;
+      min-height: 24px;
+    }
+    
+    .utility-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    .btn-utility {
+      flex: 1;
+      padding: 12px;
+      background: #f3f4f6;
+      border: 2px solid #e5e7eb;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes slideIn {
+      from { 
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to { 
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <div class="header-container">
+      <div class="brand-section">
+        <div class="logo-circle">🏠</div>
+        <div class="title-section">
+          <h1>House Price Estimator</h1>
+          <p>Fast, beautiful, and accurate predictions</p>
+        </div>
+      </div>
+      <div class="header-buttons">
+        <button id="autofill" class="btn btn-outline">Autofill Example</button>
+        <button id="clear" class="btn btn-outline">Clear Form</button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Left: Input Form -->
+      <div>
+        <div class="card" style="position: relative;">
+          <!-- Loading Overlay -->
+          <div class="loading-overlay" id="loading">
+            <div class="spinner"></div>
+            <div class="loading-text">Calculating your house price...</div>
+          </div>
+
+          <h2 class="section-title">House Details</h2>
+          
+          <form id="predictForm" method="post" novalidate>
+            <div class="form-grid">
+              <!-- Row 1 -->
+              <div class="form-group">
+                <label class="form-label">Neighborhood</label>
+                <select name="Neighborhood" class="form-input" required>
+                  <option value="">Choose neighborhood...</option>
+                  <option>CollgCr</option>
+                  <option>OldTown</option>
+                  <option>Edwards</option>
+                  <option>NridgHt</option>
+                  <option>Gilbert</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Overall Quality (1–10)</label>
+                <input name="OverallQual" class="form-input" type="number" min="1" max="10" value="7" required>
+              </div>
+
+              <!-- Row 2 -->
+              <div class="form-group">
+                <label class="form-label">Year Built</label>
+                <input name="YearBuilt" class="form-input" type="number" value="2005" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Lot Area (sq ft)</label>
+                <input name="LotArea" class="form-input" type="number" value="8500" required>
+              </div>
+
+              <!-- Row 3 -->
+              <div class="form-group">
+                <label class="form-label">Living Area (sq ft)</label>
+                <input name="GrLivArea" class="form-input" type="number" value="1500" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Kitchen Quality</label>
+                <select name="KitchenQual" class="form-input">
+                  <option value="">Select kitchen quality...</option>
+                  <option>Ex</option>
+                  <option>Gd</option>
+                  <option>TA</option>
+                </select>
+              </div>
+
+              <!-- Row 4 -->
+              <div class="form-group">
+                <label class="form-label">Bedrooms</label>
+                <input name="BedroomAbvGr" class="form-input" type="number" value="3">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Full Baths</label>
+                <input name="FullBath" class="form-input" type="number" value="2">
+              </div>
+
+              <!-- Row 5 -->
+              <div class="form-group">
+                <label class="form-label">Half Baths</label>
+                <input name="HalfBath" class="form-input" type="number" value="1">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Garage Cars</label>
+                <input name="GarageCars" class="form-input" type="number" value="2">
+              </div>
+
+              <!-- Row 6 -->
+              <div class="form-group">
+                <label class="form-label">Garage Area (sq ft)</label>
+                <input name="GarageArea" class="form-input" type="number" value="400">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Total Rooms</label>
+                <input name="TotRmsAbvGrd" class="form-input" type="number" value="7">
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Predict Price</button>
+              <button type="button" class="btn btn-secondary" id="preview">Preview Inputs</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Result Display -->
+        <div class="result-card" id="resultContainer">
+          <div class="result-header">
+            <h3 class="result-title">Prediction Result</h3>
+            <button class="btn-close" id="closeResult">×</button>
+          </div>
+          
+          <div class="price-display">
+            <div class="price-amount" id="resultPrice">—</div>
+            <div class="price-words" id="resultWords"></div>
+          </div>
+          
+          <div class="result-details">
+            <div class="detail-row">
+              <span class="detail-label">Exchange Rate (USD to INR):</span>
+              <span class="detail-value" id="resultRate">—</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Rate Source:</span>
+              <span class="detail-value" id="resultSource">—</span>
+            </div>
+          </div>
+          
+          <div class="result-actions">
+            <button class="btn btn-copy" id="copyResult">Copy Result</button>
+            <button class="btn btn-new" id="newPrediction">New Prediction</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Summary Preview -->
+      <div class="summary-card">
+        <div class="card">
+          <h2 class="section-title">Input Summary</h2>
+          
+          <div class="input-summary">
+            <div class="summary-title">📋 Selected Features</div>
+            <div class="summary-list">
+              <div class="summary-item">
+                <span class="summary-label">Neighborhood:</span>
+                <span class="summary-value" id="vNeighborhood">—</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Overall Quality:</span>
+                <span class="summary-value" id="vOverallQual">—</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Year Built:</span>
+                <span class="summary-value" id="vYearBuilt">—</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Living Area:</span>
+                <span class="summary-value" id="vGrLivArea">—</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="prediction-preview">
+            <div class="preview-price" id="predPrice">—</div>
+            <div class="preview-text" id="predSmall">Predicted price will appear here</div>
+            
+            <div class="utility-buttons">
+              <button class="btn btn-utility" id="copyBtn">📋 Copy INR</button>
+              <button class="btn btn-utility" id="downloadBtn">📥 Download CSV</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 20px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);">
+          <div style="text-align: center; padding: 15px;">
+            <div style="font-size: 14px; color: #4b5563; margin-bottom: 10px;">
+              💡 <strong>Tip:</strong> Use <strong>Autofill Example</strong> to quickly try a sample house.
+            </div>
+            <div style="font-size: 12px; color: #6b7280;">
+              All predictions are estimates based on machine learning models.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // DOM Elements
+  const form = document.getElementById('predictForm');
+  const loading = document.getElementById('loading');
+  const resultContainer = document.getElementById('resultContainer');
+  
+  // Autofill example data
+  const example = {
+    Neighborhood: 'CollgCr',
+    OverallQual: 7,
+    YearBuilt: 2005,
+    GrLivArea: 1500,
+    BedroomAbvGr: 3,
+    FullBath: 2,
+    GarageCars: 2,
+    GarageArea: 400,
+    TotRmsAbvGrd: 7,
+    LotArea: 8500,
+    HalfBath: 1,
+    KitchenQual: 'Gd'
+  };
+
+  // Function to update summary preview from form inputs
+  function updateSummaryPreview() {
+    const fields = ['Neighborhood', 'OverallQual', 'YearBuilt', 'GrLivArea'];
+    fields.forEach(field => {
+      const input = document.querySelector(`[name="${field}"]`);
+      const display = document.getElementById(`v${field}`);
+      if (input && display) {
+        display.textContent = input.value || '—';
+      }
+    });
+  }
+
+  // Form submission with AJAX
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Show loading overlay
+    loading.classList.add('show');
+    resultContainer.classList.remove('show');
+    
+    // Update summary preview BEFORE sending request (immediate feedback)
+    updateSummaryPreview();
+    
+    // Collect form data
+    const formData = new FormData(this);
+    
+    try {
+      const response = await fetch('/predict', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+      
+      const result = await response.json();
+      
+      // Hide loading
+      loading.classList.remove('show');
+      
+      if (result.error) {
+        alert('Error: ' + result.error);
+        return;
+      }
+      
+      // Update summary preview (again, to ensure it's correct)
+      updateSummaryPreview();
+      
+      // Update preview price in right sidebar
+      document.getElementById('predPrice').textContent = result.price_compact || result.price_inr;
+      document.getElementById('predSmall').textContent = result.price_words;
+      
+      // Update result container
+      document.getElementById('resultPrice').textContent = result.price_inr;
+      document.getElementById('resultWords').textContent = result.price_words;
+      document.getElementById('resultRate').textContent = result.exchange_rate.toFixed(2);
+      document.getElementById('resultSource').textContent = result.rate_source === 'live' ? 'Live Rate' : 'Fixed Rate';
+      
+      // Show result container with animation
+      resultContainer.classList.add('show');
+      
+      // Smooth scroll to result
+      setTimeout(() => {
+        resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+      
+      // Show success notification
+      showNotification('Prediction completed successfully!', 'success');
+      
+    } catch (error) {
+      loading.classList.remove('show');
+      showNotification('Failed to get prediction. Please try again.', 'error');
+      console.error('Prediction error:', error);
+    }
+  });
+
+  // Close result button
+  document.getElementById('closeResult').addEventListener('click', function() {
+    resultContainer.classList.remove('show');
+  });
+
+  // New prediction button
+  document.getElementById('newPrediction').addEventListener('click', function() {
+    resultContainer.classList.remove('show');
+    showNotification('Ready for new prediction!', 'info');
+  });
+
+  // Copy result button
+  document.getElementById('copyResult').addEventListener('click', function() {
+    const price = document.getElementById('resultPrice').textContent;
+    const words = document.getElementById('resultWords').textContent;
+    const rate = document.getElementById('resultRate').textContent;
+    const source = document.getElementById('resultSource').textContent;
+    
+    const text = `🏠 House Price Prediction:\n` +
+                 `Price: ${price}\n` +
+                 `In Words: ${words}\n` +
+                 `Exchange Rate: ${rate} (${source})\n` +
+                 `\nGenerated by House Price Estimator`;
+    
+    navigator.clipboard.writeText(text).then(() => {
+      // Show temporary feedback
+      const originalText = this.textContent;
+      this.textContent = '✓ Copied!';
+      this.style.background = '#10b981';
+      
+      setTimeout(() => {
+        this.textContent = originalText;
+        this.style.background = '';
+      }, 2000);
+    }).catch(() => {
+      showNotification('Failed to copy result', 'error');
+    });
+  });
+
+  // Copy INR button
+  document.getElementById('copyBtn').addEventListener('click', function() {
+    const price = document.getElementById('predPrice').textContent;
+    if (price !== '—' && price !== 'Submit for Prediction') {
+      navigator.clipboard.writeText(price).then(() => {
+        const originalText = this.textContent;
+        this.textContent = '✓ Copied!';
+        
+        setTimeout(() => {
+          this.textContent = originalText;
+        }, 2000);
+      }).catch(() => {
+        showNotification('Failed to copy price', 'error');
+      });
+    } else {
+      showNotification('No prediction to copy', 'warning');
+    }
+  });
+
+  // Download CSV button
+  document.getElementById('downloadBtn').addEventListener('click', function() {
+    const price = document.getElementById('predPrice').textContent;
+    const words = document.getElementById('predSmall').textContent;
+    const inputs = {
+      Neighborhood: document.getElementById('vNeighborhood').textContent,
+      OverallQual: document.getElementById('vOverallQual').textContent,
+      YearBuilt: document.getElementById('vYearBuilt').textContent,
+      GrLivArea: document.getElementById('vGrLivArea').textContent
+    };
+    
+    if (price === '—' || price === 'Submit for Prediction') {
+      showNotification('Please make a prediction first', 'warning');
+      return;
+    }
+    
+    // Get all form data for CSV
+    const formData = new FormData(form);
+    const allInputs = {};
+    for (let [key, value] of formData.entries()) {
+      allInputs[key] = value;
+    }
+    
+    // Get current date and time
+    const now = new Date();
+    const dateStr = now.toLocaleDateString();
+    const timeStr = now.toLocaleTimeString();
+    
+    // Create CSV content
+    let csv = 'House Price Prediction Report\n';
+    csv += 'Generated: ' + dateStr + ' ' + timeStr + '\n\n';
+    
+    csv += 'INPUT PARAMETERS\n';
+    csv += 'Parameter,Value\n';
+    csv += 'Neighborhood,' + (allInputs.Neighborhood || '—') + '\n';
+    csv += 'Overall Quality,' + (allInputs.OverallQual || '—') + '\n';
+    csv += 'Year Built,' + (allInputs.YearBuilt || '—') + '\n';
+    csv += 'Living Area (sq ft),' + (allInputs.GrLivArea || '—') + '\n';
+    csv += 'Lot Area (sq ft),' + (allInputs.LotArea || '—') + '\n';
+    csv += 'Bedrooms,' + (allInputs.BedroomAbvGr || '—') + '\n';
+    csv += 'Full Baths,' + (allInputs.FullBath || '—') + '\n';
+    csv += 'Half Baths,' + (allInputs.HalfBath || '—') + '\n';
+    csv += 'Garage Cars,' + (allInputs.GarageCars || '—') + '\n';
+    csv += 'Garage Area,' + (allInputs.GarageArea || '—') + '\n';
+    csv += 'Total Rooms,' + (allInputs.TotRmsAbvGrd || '—') + '\n';
+    csv += 'Kitchen Quality,' + (allInputs.KitchenQual || '—') + '\n\n';
+    
+    csv += 'PREDICTION RESULT\n';
+    csv += 'Price (INR),' + price + '\n';
+    csv += 'Price in Words,"' + words + '"\n\n';
+    
+    csv += 'NOTES\n';
+    csv += 'This is an estimate based on machine learning model.\n';
+    csv += 'Actual market prices may vary.\n';
+    
+    // Create download link
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const timestamp = now.toISOString().slice(0,19).replace(/[:]/g, '-');
+    a.href = url;
+    a.download = `house_prediction_${timestamp}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    
+    showNotification('CSV file downloaded!', 'success');
+  });
+
+  // Autofill button
+  document.getElementById('autofill').addEventListener('click', (e) => {
+    e.preventDefault();
+    
+    // Fill form with example data
+    for (const key in example) {
+      const element = document.querySelector(`[name="${key}"]`);
+      if (element) {
+        element.value = example[key];
+      }
+    }
+    
+    // Update summary preview
+    updateSummaryPreview();
+    
+    // Show notification
+    showNotification('Form filled with example data!', 'success');
+  });
+
+  // Clear button
+  document.getElementById('clear').addEventListener('click', (e) => {
+    e.preventDefault();
+    
+    if (confirm('Clear all form inputs?')) {
+      form.reset();
+      
+      // Clear summary preview
+      document.querySelectorAll('.summary-value').forEach(el => el.textContent = '—');
+      document.getElementById('predPrice').textContent = '—';
+      document.getElementById('predSmall').textContent = 'Predicted price will appear here';
+      resultContainer.classList.remove('show');
+      
+      showNotification('Form cleared!', 'info');
+    }
+  });
+
+  // Preview button
+  document.getElementById('preview').addEventListener('click', (e) => {
+    e.preventDefault();
+    updateSummaryPreview();
+    showNotification('Summary updated with current inputs!', 'info');
+  });
+
+  // Function to show notifications
+  function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.textContent = message;
+    
+    // Set styles based on type
+    let bgColor, textColor;
+    switch(type) {
+      case 'success':
+        bgColor = '#10b981';
+        textColor = 'white';
+        break;
+      case 'error':
+        bgColor = '#ef4444';
+        textColor = 'white';
+        break;
+      case 'warning':
+        bgColor = '#f59e0b';
+        textColor = 'white';
+        break;
+      case 'info':
+      default:
+        bgColor = '#3b82f6';
+        textColor = 'white';
+        break;
+    }
+    
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: ${bgColor};
+      color: ${textColor};
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      z-index: 1000;
+      animation: slideInRight 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      max-width: 300px;
+      word-wrap: break-word;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+      notification.style.animation = 'fadeOut 0.3s ease';
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
+  }
+
+  // Add CSS for notification animations
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Initialize summary preview on page load
+  updateSummaryPreview();
+  
+  // Add input event listeners to update summary in real-time
+  document.querySelectorAll('.form-input').forEach(input => {
+    input.addEventListener('change', function() {
+      // Update only if this field is one of our summary fields
+      const fieldName = this.name;
+      const summaryFields = ['Neighborhood', 'OverallQual', 'YearBuilt', 'GrLivArea'];
+      
+      if (summaryFields.includes(fieldName)) {
+        const display = document.getElementById(`v${fieldName}`);
+        if (display) {
+          display.textContent = this.value || '—';
+        }
+      }
+    });
+    
+    // Also update on input (for real-time feedback)
+    input.addEventListener('input', function() {
+      const fieldName = this.name;
+      const summaryFields = ['Neighborhood', 'OverallQual', 'YearBuilt', 'GrLivArea'];
+      
+      if (summaryFields.includes(fieldName)) {
+        const display = document.getElementById(`v${fieldName}`);
+        if (display) {
+          display.textContent = this.value || '—';
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>
