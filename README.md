@@ -50,6 +50,7 @@ http://localhost:5000
 **🛠️ Technical Stack**
 
 **Backend**
+
 Framework: Flask (Python)
 
 Machine Learning: Scikit-learn, Joblib
@@ -59,6 +60,7 @@ Data Processing: Pandas, NumPy
 API Integration: Real-time exchange rates via exchangerate.host
 
 **Frontend**
+
 HTML5: Semantic markup
 
 CSS3: Modern styling with Flexbox/Grid
