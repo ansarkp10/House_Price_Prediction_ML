@@ -1,5 +1,5 @@
 # House_Price_Prediction_Using_ML
-![Uploading Screenshot (108).png…]()
+![App Screenshot](https://github.com/ansarkp10/House_Price_Prediction_ML/blob/main/User_UI.png)
 
 🏠 House Price Estimator
 A modern, responsive web application that predicts house prices using machine learning with a beautiful, user-friendly interface.
