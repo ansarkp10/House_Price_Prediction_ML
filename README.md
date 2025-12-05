@@ -47,8 +47,8 @@ http://localhost:5000
 
 
 
-
 **🛠️ Technical Stack**
+
 **Backend**
 Framework: Flask (Python)
 
