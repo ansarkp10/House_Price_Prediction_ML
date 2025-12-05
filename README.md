@@ -57,7 +57,6 @@ Machine Learning: Scikit-learn, Joblib
 
 Data Processing: Pandas, NumPy
 
-API Integration: Real-time exchange rates via exchangerate.host
 
 **Frontend**
 
